@@ -29,13 +29,19 @@ class DiceRoller:
             ]
         )
 
-    def roll(self, dice: str):
+    @staticmethod
+    def roll(dice: str):
         """Симулирует бросок (например, 2d6)"""
         match = re.match(r"(\d*)d(\d+)", dice)
         if not match:
-            return "[ошибка броска]"
+            return [], "[ошибка броска]"
         count, sides = match.groups()
         count = int(count) if count else 1
         sides = int(sides)
         rolls = [random.randint(1, sides) for _ in range(count)]
-        return rolls, sum(rolls)
+
+        # Текстовый фансервис
+        rolls_str = " + ".join(str(r) for r in rolls)
+        result_text = f"🎲 Ты бросил {dice}: {rolls_str} = {sum(rolls)}"
+
+        return rolls, result_text

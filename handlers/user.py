@@ -79,19 +79,19 @@ async def start_game(callback: CallbackQuery):
 async def handle_message(message: Message):
     await message.chat.do("typing")
     user_input = message.text
-    reply = dnd_bot_interaction(user_input)
+    reply = dnd_bot_interaction(user_input, session_id=str(message.from_user.id))
 
-    # Ищем шаблон броска кубика вида {roll:1d20}
-    roll_match = re.search(r"\{\{roll:(\d+)d(\d+)\}\}", reply)
+    # Ищем шаблон броска кубика вида [roll:1d20]
+    roll_match = re.search(r"\[roll:(\d+)d(\d+)\]", reply)
 
     if roll_match:
-        # Сохраняем тип кубика и кол-во
-        count, sides = roll_match.groups()
-        count, sides = int(count), int(sides)
+        count, sides = map(int, roll_match.groups())
 
-        # Сохраняем это куда-нибудь, если нужно — например, в память сессии
+        # Убираем метку броска из текста, заменяя её на сообщение ожидания
+        reply_text = reply.replace(roll_match.group(0), "🎲 Ждём броска кубика...")
+
         await message.reply(
-            reply.replace(roll_match.group(0), "🎲 Ждём броска кубика..."),
+            reply_text,
             reply_markup=get_roll_button_keyboard(count, sides),
         )
     else:
@@ -100,21 +100,29 @@ async def handle_message(message: Message):
 
 @user.callback_query(F.data.startswith("roll_"))
 async def handle_roll(callback: CallbackQuery):
-    # Получаем параметры из callback.data, например "roll_1d20"
-    dice_str = callback.data[len("roll_") :]  # "1d20"
+    # Получаем строку с данными для броска
+    dice_str = callback.data[len("roll_") :]
     num, sides = map(int, dice_str.lower().split("d"))
 
-    # Результат броска
-    result = DiceRoller.roll(num, sides)
+    # Получаем результат броска
+    _, result_text = DiceRoller.roll(f"{num}d{sides}")
 
-    # Отправляем результат пользователю
-    await callback.message.answer(f"🎲 Ты бросил {num}d{sides} и выпало: {result}")
+    # Берём последнее сообщение Narramancer'а
+    prev_message = callback.message.reply_to_message
+    if not prev_message:
+        await callback.answer("Произошла ошибка: не найдено предыдущее сообщение.")
+        return
 
-    # Теперь можно продолжить историю
+    # Обновляем текст с результатами в original_prompt
+    original_prompt = prev_message.text.replace("🎲 Ждём броска кубика...", result_text)
+
+    # Передаем обновленный prompt в модель
     continuation = dnd_bot_interaction(
-        f"Я бросил {num}d{sides} и получил {result}. Что произошло?",
-        session_id=str(callback.from_user.id),
+        original_prompt, session_id=str(callback.from_user.id), roll=result_text
     )
+
+    # Отправляем продолжение от модели
     await callback.message.answer(continuation)
 
+    # Завершаем callback
     await callback.answer()
