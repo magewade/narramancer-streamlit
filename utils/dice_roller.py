@@ -4,7 +4,6 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 
 class DiceRoller:
-    # Правильное регулярное выражение для {{roll:XdY}} (например, {{roll:1d20}})
     DICE_PATTERN = r"\{\{roll:(\d+d\d+)\}\}"
 
     def extract_dice(self, text: str):
@@ -32,7 +31,7 @@ class DiceRoller:
 
     @staticmethod
     def roll(dice: str):
-        """Симулирует бросок (например, 1d20 или 1d6)"""
+        """Симулирует бросок"""
         match = re.match(r"(\d+)d(\d+)", dice)
         if not match:
             return [], "[ошибка броска]"
