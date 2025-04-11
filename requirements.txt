@@ -13,6 +13,7 @@ attrs==25.1.0
 beautifulsoup4==4.12.2
 certifi==2025.1.31
 charset-normalizer==3.4.1
+cmake==4.0.0
 comm==0.2.2
 dataclasses-json==0.6.7
 datasets==3.5.0
