@@ -9,7 +9,6 @@ import re
 from langchain_community.chat_message_histories import SQLChatMessageHistory
 
 
-# Загрузка переменных окружения
 load_dotenv()
 
 

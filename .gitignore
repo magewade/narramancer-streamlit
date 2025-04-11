@@ -11,4 +11,4 @@ venv/
 !.env.example
 *.log
 .DS_Store
-model/saiga_llama3_8b.Q3_K_L.gguf.download/saiga_llama3_8b.Q3_K_L.gguf
+database/chat_history.db
