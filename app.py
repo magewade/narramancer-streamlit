@@ -10,23 +10,46 @@ st.title("🧙‍♂️🏔️ Narramancer — Your Story Begins")
 
 # 📈 Обновление HP/Gold из текста
 def update_stats_from_response(response_data):
-    if st.session_state.get("stats_parsed", False):
-        return
-
     text = response_data.get("text", "")
+    st.write("🔍 Analyzing response for stats:", text)
 
     # 🩸 Ищем HP (например: "HP: 72 / 72")
-    hp_match = re.search(r"HP:\s*(\d+)\s*/\s*(\d+)", text)
+    hp_match = re.search(r"(?:Your\s+)?HP:\s*(\d+)\s*/\s*(\d+)", text)
     if hp_match:
         st.session_state.hp = int(hp_match.group(1))
         st.session_state.max_hp = int(hp_match.group(2))
+        st.write(f"✅ HP parsed: {st.session_state.hp}/{st.session_state.max_hp}")
+    else:
+        st.write("❌ HP not found in response.")
 
     # 🪙 Ищем золото (например: "Gold Coins: 75")
     gold_match = re.search(r"Gold Coins:\s*(\d+)", text)
     if gold_match:
         st.session_state.gold = int(gold_match.group(1))
+        st.write(f"✅ Gold parsed: {st.session_state.gold}")
+    else:
+        st.write("❌ Gold not found in response.")
 
-    st.session_state.stats_parsed = True
+
+# Сайдбар — лист персонажа
+
+
+def render_sidebar():
+    with st.sidebar:
+        st.header("📜 Character Sheet")
+        if st.session_state.character_created:
+            st.text_input("Name", st.session_state.get("char_name", ""), disabled=True, key="sidebar_name")
+            st.text_input("Class", st.session_state.get("char_class", ""), disabled=True, key="sidebar_class")
+
+            st.text(f"🪙 Gold: {st.session_state.get('gold', 0)}")
+            st.text(
+                f"💖 HP: {st.session_state.get('hp', 0)} / {st.session_state.get('max_hp', 0)}"
+            )
+            st.progress(
+                st.session_state.hp / st.session_state.max_hp
+                if st.session_state.max_hp
+                else 0
+            )
 
 
 # Инициализация сессии
@@ -41,16 +64,9 @@ if "chatbot" not in st.session_state:
     st.session_state.gold = 50
     st.session_state.pending_roll = None
     st.session_state.stats_parsed = False
+    st.write("🚀 Session initialized")
 
-# Сайдбар — лист персонажа
-with st.sidebar:
-    st.header("📜 Character Sheet")
-    if st.session_state.character_created:
-        st.text_input("Name", st.session_state.char_name, disabled=True)
-        st.text_input("Class", st.session_state.char_class, disabled=True)
-        st.text(f"🪙 Gold: {st.session_state.gold}")
-        st.text(f"💖 HP: {st.session_state.hp} / {st.session_state.max_hp}")
-        st.progress(st.session_state.hp / st.session_state.max_hp)
+render_sidebar()
 
 # 🔧 Этап создания персонажа
 if not st.session_state.character_created:
@@ -90,8 +106,8 @@ if not st.session_state.character_created:
                     {"role": "assistant", "content": response_data["text"]}
                 )
                 update_stats_from_response(response_data)
+                st.write("🧪 RAW response before stats parsing:", response_data)
 
-                # Проверим наличие броска
                 roll_match = re.search(r"\[roll:(\d+)d(\d+)\]", response_data["text"])
                 if roll_match:
                     st.session_state.pending_roll = (
@@ -111,7 +127,6 @@ else:
     for msg in st.session_state.messages:
         st.chat_message(msg["role"]).markdown(msg["content"])
 
-    # 🎲 Если ожидается бросок кубика — покажем кнопку
     if st.session_state.pending_roll:
         num_dice, dice_sides = st.session_state.pending_roll
         if st.button(f"🎲 Roll {num_dice}d{dice_sides}"):
@@ -130,8 +145,8 @@ else:
                 {"role": "assistant", "content": response_data["text"]}
             )
             update_stats_from_response(response_data)
+            st.write("🧪 RAW response before stats parsing:", response_data)
 
-            # Обновим флаг броска
             roll_match = re.search(r"\[roll:(\d+)d(\d+)\]", response_data["text"])
             if roll_match:
                 st.session_state.pending_roll = (
@@ -143,7 +158,6 @@ else:
 
             st.rerun()
 
-    # 💬 Ввод команды игрока
     player_input = st.chat_input("What do you want to do?")
 
     if player_input:
@@ -157,8 +171,8 @@ else:
             {"role": "assistant", "content": response_data["text"]}
         )
         update_stats_from_response(response_data)
+        st.write("🧪 RAW response before stats parsing:", response_data)
 
-        # Проверим наличие броска
         roll_match = re.search(r"\[roll:(\d+)d(\d+)\]", response_data["text"])
         if roll_match:
             st.session_state.pending_roll = (
