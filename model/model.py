@@ -8,13 +8,22 @@ import sqlalchemy
 import re
 from langchain_community.chat_message_histories import SQLChatMessageHistory
 import random
+import streamlit as st
+
 
 load_dotenv()
 
 
+def get_secret(key):
+    return st.secrets.get(key) or os.getenv(key)
+
+
+api_key = get_secret("MISTRAL_API_KEY")
+
+
 class DNDChatbot:
     def __init__(self):
-        self.api_key = os.getenv("MISTRAL_API_KEY")
+        self.api_key = get_secret("MISTRAL_API_KEY")
 
         self.llm = ChatMistralAI(
             model="mistral-large-latest",
@@ -55,7 +64,7 @@ class DNDChatbot:
             "- Use ONLY format [roll:1d20]. Don’t substitute the result — the player rolls.\n"
             "- One roll per situation. No multi-dice rolls.\n"
             "- Use modifiers: result + (related attribute - 10) / 2\n"
-            "- Result > 10 means success. Higher is better (e.g., 19 > 11).\n"
+            "- Result > 10 means success.\n"
             "- Encourage rolls often — at least once every 3–5 actions.\n"
             "- Don't generate more than 2 enemies at a time. Fight should be dynamic and fast.\n"
             "- If an option includes 'try to' (e.g., try to persuade, hide, flee), request a roll in the next message.\n"

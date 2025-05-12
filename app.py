@@ -2,10 +2,27 @@ import streamlit as st
 from model.model import DNDChatbot
 import random
 import re
+import os
 
 # Настройки
 st.set_page_config(page_title="Narramancer", page_icon="🎲")
 st.title("🧙‍♂️🏔️ Narramancer — Your Story Begins")
+
+# Пути к картинкам
+dice_image_folder = "data/dice/"
+
+
+# Функция для отображения картинки кубика
+def show_dice_image(roll_result):
+    dice_image_path = os.path.join(dice_image_folder, f"{roll_result}.png")
+    if os.path.exists(dice_image_path):
+        st.image(
+            dice_image_path,
+            caption=f"Result: {roll_result}",
+            width=200
+        )
+    else:
+        st.warning("No image found for this roll result.")
 
 
 # 🆕 Сайдбар — лист персонажа
@@ -112,13 +129,19 @@ else:
     for msg in st.session_state.messages:
         st.chat_message(msg["role"]).markdown(msg["content"])
 
+    # Пример использования в основном коде
     if st.session_state.pending_roll:
         num_dice, dice_sides = st.session_state.pending_roll
         if st.button(f"🎲 Roll {num_dice}d{dice_sides}"):
             roll_result = sum(random.randint(1, dice_sides) for _ in range(num_dice))
             roll_input = f"Rolled {num_dice}d{dice_sides} → {roll_result}"
+
+            # Отображаем результат и картинку
             st.chat_message("user").markdown(roll_input)
             st.session_state.messages.append({"role": "user", "content": roll_input})
+
+            # Показываем картинку с результатом
+            show_dice_image(roll_result)
 
             with st.spinner("Narramancer is interpreting the result..."):
                 response_data = st.session_state.chatbot.interact(
