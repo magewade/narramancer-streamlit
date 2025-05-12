@@ -8,48 +8,36 @@ st.set_page_config(page_title="Narramancer", page_icon="🎲")
 st.title("🧙‍♂️🏔️ Narramancer — Your Story Begins")
 
 
-# 📈 Обновление HP/Gold из текста
-def update_stats_from_response(response_data):
-    text = response_data.get("text", "")
-    st.write("🔍 Analyzing response for stats:", text)
-
-    # 🩸 Ищем HP (например: "HP: 72 / 72")
-    hp_match = re.search(r"(?:Your\s+)?HP:\s*(\d+)\s*/\s*(\d+)", text)
-    if hp_match:
-        st.session_state.hp = int(hp_match.group(1))
-        st.session_state.max_hp = int(hp_match.group(2))
-        st.write(f"✅ HP parsed: {st.session_state.hp}/{st.session_state.max_hp}")
-    else:
-        st.write("❌ HP not found in response.")
-
-    # 🪙 Ищем золото (например: "Gold Coins: 75")
-    gold_match = re.search(r"Gold Coins:\s*(\d+)", text)
-    if gold_match:
-        st.session_state.gold = int(gold_match.group(1))
-        st.write(f"✅ Gold parsed: {st.session_state.gold}")
-    else:
-        st.write("❌ Gold not found in response.")
-
-
-# Сайдбар — лист персонажа
-
-
+# 🆕 Сайдбар — лист персонажа
 def render_sidebar():
     with st.sidebar:
         st.header("📜 Character Sheet")
         if st.session_state.character_created:
-            st.text_input("Name", st.session_state.get("char_name", ""), disabled=True, key="sidebar_name")
-            st.text_input("Class", st.session_state.get("char_class", ""), disabled=True, key="sidebar_class")
+            # Уникальные ключи, чтобы избежать конфликтов
+            st.text_input(
+                "Name",
+                st.session_state.get("char_name", ""),
+                disabled=True,
+                key="sidebar_name_input",
+            )
+            st.text_input(
+                "Class",
+                st.session_state.get("char_class", ""),
+                disabled=True,
+                key="sidebar_class_input",
+            )
 
-            st.text(f"🪙 Gold: {st.session_state.get('gold', 0)}")
-            st.text(
-                f"💖 HP: {st.session_state.get('hp', 0)} / {st.session_state.get('max_hp', 0)}"
-            )
-            st.progress(
-                st.session_state.hp / st.session_state.max_hp
-                if st.session_state.max_hp
-                else 0
-            )
+            # Добавляем кнопку для начала новой игры
+            if st.button("Start New Game"):
+                # Сброс состояния
+                st.session_state.character_created = False
+                st.session_state.messages = []
+                st.session_state.pending_roll = None
+                st.session_state.stats_parsed = False
+                st.session_state.initial_story_shown = False
+                st.session_state.chatbot = DNDChatbot()
+                st.session_state.session_id = "streamlit_session"
+                st.rerun()  # Перезагружаем приложение
 
 
 # Инициализация сессии
@@ -59,21 +47,19 @@ if "chatbot" not in st.session_state:
     st.session_state.messages = []
     st.session_state.character_created = False
     st.session_state.initial_story_shown = False
-    st.session_state.hp = 100
-    st.session_state.max_hp = 100
-    st.session_state.gold = 50
     st.session_state.pending_roll = None
     st.session_state.stats_parsed = False
     st.write("🚀 Session initialized")
 
+# Отображаем сайдбар
 render_sidebar()
 
 # 🔧 Этап создания персонажа
 if not st.session_state.character_created:
     st.subheader("🎭 Create Your Character")
 
-    char_name = st.text_input("Name", value="John", key="name_input")
-    char_class = st.text_input("Class", value="Warrior", key="class_input")
+    char_name = st.text_input("Name", value="John", key="create_name_input")
+    char_class = st.text_input("Class", value="Rogue", key="create_class_input")
     char_backstory = st.text_area(
         "Backstory",
         value=(
@@ -105,7 +91,6 @@ if not st.session_state.character_created:
                 st.session_state.messages.append(
                     {"role": "assistant", "content": response_data["text"]}
                 )
-                update_stats_from_response(response_data)
                 st.write("🧪 RAW response before stats parsing:", response_data)
 
                 roll_match = re.search(r"\[roll:(\d+)d(\d+)\]", response_data["text"])
@@ -144,8 +129,6 @@ else:
             st.session_state.messages.append(
                 {"role": "assistant", "content": response_data["text"]}
             )
-            update_stats_from_response(response_data)
-            st.write("🧪 RAW response before stats parsing:", response_data)
 
             roll_match = re.search(r"\[roll:(\d+)d(\d+)\]", response_data["text"])
             if roll_match:
@@ -170,8 +153,6 @@ else:
         st.session_state.messages.append(
             {"role": "assistant", "content": response_data["text"]}
         )
-        update_stats_from_response(response_data)
-        st.write("🧪 RAW response before stats parsing:", response_data)
 
         roll_match = re.search(r"\[roll:(\d+)d(\d+)\]", response_data["text"])
         if roll_match:
