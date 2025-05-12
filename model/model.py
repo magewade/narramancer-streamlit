@@ -10,15 +10,14 @@ from langchain_community.chat_message_histories import SQLChatMessageHistory
 import random
 import streamlit as st
 
-
 load_dotenv()
 
 
 def get_secret(key):
-    return st.secrets.get(key) or os.getenv(key)
-
-
-api_key = get_secret("MISTRAL_API_KEY")
+    secret = st.secrets.get(key, None)
+    if secret is None or secret == "placeholder":
+        return os.getenv(key)
+    return secret
 
 
 class DNDChatbot:
@@ -26,8 +25,7 @@ class DNDChatbot:
         self.api_key = get_secret("MISTRAL_API_KEY")
 
         self.llm = ChatMistralAI(
-            model="mistral-large-latest",
-            temperature=0.7,
+            model="mistral-large-latest", temperature=0.7, api_key=self.api_key
         )
 
         self.system_prompt = (
