@@ -57,7 +57,7 @@ jupyter_core==5.7.2
 langchain==0.2.11
 langchain-core==0.2.26
 langchain-community==0.2.3
-langchain-mistralai==0.2.11
+langchain-mistralai==0.2.10  # самая последняя доступная
 langchain-openai==0.1.7
 langchain-text-splitters==0.0.4
 langsmith==0.3.20
