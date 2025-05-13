@@ -60,7 +60,7 @@ langchain-community==0.0.32
 langchain-mistralai==0.2.10
 langchain-openai==0.0.6
 langchain-text-splitters==0.0.1
-langsmith==0.3.8
+langsmith==0.1.17
 llama_cpp_python==0.3.8
 lxml==4.9.3
 magic-filter==1.0.12
