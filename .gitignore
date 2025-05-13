@@ -12,4 +12,3 @@ venv/
 *.log
 .DS_Store
 database/chat_history.db
-.streamlit/

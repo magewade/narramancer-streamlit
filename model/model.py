@@ -11,20 +11,20 @@ import random
 import streamlit as st
 
 
-def get_secret(key):
-    secret = st.secrets.get(key, None)
-    if not secret or secret == "placeholder":
-        env_val = os.getenv(key)
-        if not env_val:
-            st.error(f"❌ Переменная {key} не найдена ни в secrets.toml, ни в .env")
-            st.stop()
-        return env_val
-    return secret
+# def get_secret(key):
+#     secret = st.secrets.get(key, None)
+#     if not secret or secret == "placeholder":
+#         env_val = os.getenv(key)
+#         if not env_val:
+#             st.error(f"❌ Переменная {key} не найдена ни в secrets.toml, ни в .env")
+#             st.stop()
+#         return env_val
+#     return secret
 
 
 class DNDChatbot:
     def __init__(self):
-        self.api_key = get_secret("MISTRAL_API_KEY")
+        self.api_key = st.secrets.get("MISTRAL_API_KEY", None)
 
         self.llm = ChatMistralAI(
             model="mistral-large-latest", temperature=0.7, api_key=self.api_key
