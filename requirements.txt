@@ -59,7 +59,7 @@ langchain-core==0.3.0
 langchain-community==0.3.0
 langchain-mistralai==0.3.0
 langchain-openai==0.3.0
-langchain-text-splitters==0.3.0
+langchain-text-splitters
 langsmith==0.1.20
 llama_cpp_python==0.3.8
 lxml==4.9.3
