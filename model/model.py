@@ -12,9 +12,9 @@ import streamlit as st
 
 load_dotenv()
 
-
 def get_secret(key):
     secret = st.secrets.get(key, None)
+    st.error(f"❌ Переменная {key} не найдена в secrets.toml")
     if not secret or secret == "placeholder":
         env_val = os.getenv(key)
         if not env_val:
