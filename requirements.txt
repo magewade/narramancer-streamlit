@@ -55,7 +55,7 @@ jsonschema-specifications==2025.4.1
 jupyter_client==8.6.3
 jupyter_core==5.7.2
 langchain==0.1.16
-langchain-core==0.1.35
+langchain-core==0.1.42
 langchain-community==0.0.32
 langchain-mistralai==0.2.10
 langchain-openai==0.0.6
