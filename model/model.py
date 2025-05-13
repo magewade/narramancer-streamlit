@@ -24,11 +24,11 @@ import streamlit as st
 
 class DNDChatbot:
     def __init__(self):
-        self.api_key = st.secrets.get("MISTRAL_API_KEY", None)
+        # self.api_key = st.secrets.get("MISTRAL_API_KEY", None)
 
-        self.llm = ChatMistralAI(
-            model="mistral-large-latest", temperature=0.7, api_key=self.api_key
-        )
+        # self.llm = ChatMistralAI(
+        #     model="mistral-large-latest", temperature=0.7, api_key=self.api_key
+        # )
 
         self.system_prompt = (
             "You are Narramancer — the game master and storyteller in a role-playing game inspired by Dungeons & Dragons.\n\n"
