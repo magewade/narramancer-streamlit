@@ -147,4 +147,4 @@ wsproto==1.2.0
 xxhash==3.5.0
 yarl==1.18.3
 zstandard==0.23.0
-git+https://github.com/langchain-ai/langchain-mistralai
+git+https://github.com/langchain-ai/langchain/tree/master/libs/partners/mistralai/langchain_mistralai
