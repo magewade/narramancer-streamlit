@@ -3,9 +3,9 @@ from model.model import DNDChatbot
 import random
 import re
 import os
-# from dotenv import load_dotenv
+from dotenv import load_dotenv
 
-# load_dotenv()
+load_dotenv()
 
 # Настройки
 st.set_page_config(page_title="Narramancer", page_icon="🎲")
