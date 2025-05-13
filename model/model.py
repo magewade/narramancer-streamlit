@@ -1,5 +1,5 @@
 import os
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 from langchain_mistralai import ChatMistralAI
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.output_parsers import StrOutputParser
@@ -10,11 +10,9 @@ from langchain_community.chat_message_histories import SQLChatMessageHistory
 import random
 import streamlit as st
 
-load_dotenv()
 
 def get_secret(key):
     secret = st.secrets.get(key, None)
-    st.error(f"❌ Переменная {key} не найдена в secrets.toml")
     if not secret or secret == "placeholder":
         env_val = os.getenv(key)
         if not env_val:
