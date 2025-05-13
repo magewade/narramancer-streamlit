@@ -123,7 +123,7 @@ SQLAlchemy==2.0.40
 stack-data==0.6.3
 streamlit==1.45.0
 sympy==1.13.1
-tenacity==9.0.0
+tenacity==8.2.3
 threadpoolctl==3.6.0
 tiktoken==0.8.0
 tokenizers==0.21.1
