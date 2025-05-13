@@ -15,8 +15,12 @@ load_dotenv()
 
 def get_secret(key):
     secret = st.secrets.get(key, None)
-    if secret is None or secret == "placeholder":
-        return os.getenv(key)
+    if not secret or secret == "placeholder":
+        env_val = os.getenv(key)
+        if not env_val:
+            st.error(f"❌ Переменная {key} не найдена ни в secrets.toml, ни в .env")
+            st.stop()
+        return env_val
     return secret
 
 
