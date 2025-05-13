@@ -55,12 +55,12 @@ jsonschema-specifications==2025.4.1
 jupyter_client==8.6.3
 jupyter_core==5.7.2
 langchain==0.3.24
-langchain-core==0.3.0
-langchain-community==0.3.0
-langchain-mistralai==0.3.0
-langchain-openai==0.3.0
+langchain-core
+langchain-community
+langchain-mistralai
+langchain-openai
 langchain-text-splitters
-langsmith==0.1.20
+langsmith
 llama_cpp_python==0.3.8
 lxml==4.9.3
 magic-filter==1.0.12
