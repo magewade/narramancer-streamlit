@@ -1,5 +1,6 @@
 import os
-# from dotenv import load_dotenv
+from dotenv import load_dotenv
+import streamlit as st
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables.history import RunnableWithMessageHistory
@@ -8,7 +9,6 @@ import re
 from langchain_mistralai import ChatMistralAI
 from langchain_community.chat_message_histories import SQLChatMessageHistory
 import random
-import streamlit as st
 
 
 # def get_secret(key):
