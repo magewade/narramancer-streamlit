@@ -1,5 +1,5 @@
 import streamlit as st
-from mount.src.narramancer-streamlit.model_folder.model_file import DNDChatbot
+from model_folder.model_file import DNDChatbot
 import random
 import re
 import os
