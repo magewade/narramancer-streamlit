@@ -1,5 +1,5 @@
 import streamlit as st
-from model.model import DNDChatbot
+from model_folder.model_file import DNDChatbot
 import random
 import re
 import os
